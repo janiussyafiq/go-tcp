@@ -58,14 +58,23 @@ func testEdgeCase(userIP string) {
 	fixedWindow := ratelimiter.NewFixedWindow(5, 5*time.Second)
 	slidingWindow := ratelimiter.NewSlidingWindow(5, 5*time.Second)
 
-	fmt.Println("Scenario: Make 5 requests near end of window, then 5 more after reset")
+	fmt.Println("Allow once to start the window...")
 	fmt.Println("----------------------------------------------------------")
+
+	fixAllowed := fixedWindow.Allow(userIP)
+	slidAllowed := slidingWindow.Allow(userIP)
+
+	fmt.Printf("  Fixed Window:   %s\n", formatResult(fixAllowed))
+	fmt.Printf("  Sliding Window: %s\n", formatResult(slidAllowed))
 
 	fmt.Println("\nWaiting 4 seconds first...")
 	time.Sleep(4 * time.Second)
 
-	fmt.Println("\nTime ~4s: Making 5 requests...")
-	for i := 1; i <= 5; i++ {
+	fmt.Println("Scenario: Make 4 other requests near end of window, then 5 more after reset")
+	fmt.Println("----------------------------------------------------------")
+
+	fmt.Println("\nTime ~4s: Making 4 requests...")
+	for i := 1; i <= 4; i++ {
 		fixedWindow.Allow(userIP)
 		slidingWindow.Allow(userIP)
 	}
@@ -112,8 +121,8 @@ func testEdgeCase(userIP string) {
 		fmt.Println("      This violates the '5 per 5 seconds' limit!")
 	}
 
-	if slidingCount == 0 {
-		fmt.Println("  ✅ Sliding Window: Correctly blocked all requests")
+	if slidingCount == 1 {
+		fmt.Println("  ✅ Sliding Window: Correctly blocked 4/5 requests")
 		fmt.Println("      (Looks back 5 seconds and sees the first 5 requests)")
 		fmt.Println("      This properly enforces the '5 per 5 seconds' limit!")
 	}
