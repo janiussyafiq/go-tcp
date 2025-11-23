@@ -43,6 +43,13 @@ func NewBackend(url string) *Backend {
 }
 
 // IsHealthy returns true if backend is healthy (thread-safe)
+func (b *Backend) IsHealthy() bool {
+	b.mu.RLock()
+	defer b.mu.RUnlock()
+	return b.Status == Healthy
+}
+
+// MarkUnhealthy marks backend as unhealthy (thread-safe)
 func (b *Backend) MarkHealthy() {
 	b.mu.Lock()
 	defer b.mu.Unlock()
