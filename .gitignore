@@ -1,0 +1,15 @@
+# APISIX logs
+apisix-plugins/apisix_logs/*
+
+# Docker volumes
+etcd_data/
+
+# macOS
+.DS_Store
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/

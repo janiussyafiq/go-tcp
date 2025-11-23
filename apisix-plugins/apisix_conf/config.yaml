@@ -1,6 +1,7 @@
 apisix:
   node_listen: 9080
   enable_admin: true
+  extra_lua_path: "/opt/apisix/plugins/?.lua"
 
 deployment:
   role: traditional
@@ -18,3 +19,6 @@ deployment:
       - "http://etcd:2379"
     prefix: /apisix
     timeout: 30
+
+plugins:
+  - request-logger
