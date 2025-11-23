@@ -23,3 +23,4 @@ deployment:
 plugins:
   - request-logger
   - ip-blocker
+  - header-injector
