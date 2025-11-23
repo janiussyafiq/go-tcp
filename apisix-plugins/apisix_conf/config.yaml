@@ -22,3 +22,4 @@ deployment:
 
 plugins:
   - request-logger
+  - ip-blocker
