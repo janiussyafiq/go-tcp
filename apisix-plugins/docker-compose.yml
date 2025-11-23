@@ -1,0 +1,38 @@
+services:
+  apisix:
+    image: apache/apisix:3.7.0-debian
+    restart: always
+    volumes:
+      - ./apisix_logs:/usr/local/apisix/logs
+      - ./plugins:/opt/apisix/plugins:ro
+      - ./apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
+    depends_on:
+      - etcd
+    ports:
+      - "9080:9080/tcp"
+      - "9180:9180/tcp"
+    networks:
+      - apisix
+
+  etcd:
+    image: gcr.io/etcd-development/etcd:v3.5.5
+    restart: always
+    volumes:
+      - etcd_data:/etcd-data
+    environment:
+      ETCD_LISTEN_CLIENT_URLS: "http://0.0.0.0:2379"
+      ETCD_ADVERTISE_CLIENT_URLS: "http://etcd:2379"
+    command:
+      - etcd
+      - --data-dir=/etcd-data
+    ports:
+      - "2379:2379"
+    networks:
+      - apisix
+
+networks:
+  apisix:
+    driver: bridge
+
+volumes:
+  etcd_data:
