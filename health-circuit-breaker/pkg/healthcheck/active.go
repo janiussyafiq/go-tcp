@@ -94,16 +94,18 @@ func (hc *ActiveHealthChecker) checkAllBackends() {
 
 // checkBackend performs a health check on a single backend
 func (hc *ActiveHealthChecker) checkBackend(backend *Backend) {
-	req, err := http.NewRequestWithContext(hc.ctx, http.MethodGet, backend.URL, nil)
+	healthURL := backend.URL + "/health"
+
+	req, err := http.NewRequestWithContext(hc.ctx, http.MethodGet, healthURL, nil)
 	if err != nil {
-		log.Printf("Failed to create request for %s: %v", backend.URL, err)
+		log.Printf("Failed to create request for %s: %v", healthURL, err)
 		backend.MarkUnhealthy()
 		return
 	}
 
 	resp, err := hc.httpClient.Do(req)
 	if err != nil {
-		log.Printf("Health check failed for %s: %v", backend.URL, err)
+		log.Printf("Health check failed for %s: %v", healthURL, err)
 		backend.MarkUnhealthy()
 		return
 	}
